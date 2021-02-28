@@ -1,0 +1,40 @@
+#+LATEX_HEADER: \newenvironment{lequation}{\begin{equation}\Large}{\end{equation}}
+#+OPTIONS: ^:nil
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: G[o]TD
+#+AUTHOR: 杨 睿
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: 
+#+OPTIONS: H:4 toc:t
+#+OPTIONS: tex:t
+#+HTML_HEAD: <style>pre.src{background:#343131;color:white;} </style>
+
+* Overview
+
+G[o]TD means:
+
+1. A go-lang GTD tool
+2. GO TO DO !!
+
+It is a light-weight command line tool, which managers your todo list. However, gotd is more than a TODO tool like [[https://github.com/google/gtd-txt][~google/gtd-txt~]] or [[https://github.com/mattn/todo][~mattn/todo~]]. It supports:
+
+- event collection and time statistics.
+  + We know when a task is done and how long it takes.
+  + moreover, we know how much time we spend on this task in this week or last month.
+- quick search by keywords, tags, priority, state, ...
+- ~daily|weekly|monthly~ task definition & report
+- serverless, using ~sqlite~ database as backend
+
+* Getting Started
+
+** Installation
+
+#+BEGIN_SRC bash
+go get github.com/Yangruipis/gotd
+#+END_SRC
+
+** Requirements
+
+~go>=1.5~
+
+** TODO Usage
