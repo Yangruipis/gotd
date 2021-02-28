@@ -9,32 +9,33 @@
 #+OPTIONS: tex:t
 #+HTML_HEAD: <style>pre.src{background:#343131;color:white;} </style>
 
-* Overview
+** Overview
 
 G[o]TD means:
 
 1. A go-lang GTD tool
 2. GO TO DO !!
 
-It is a light-weight command line tool, which managers your todo list. However, gotd is more than a TODO tool like [[https://github.com/google/gtd-txt][~google/gtd-txt~]] or [[https://github.com/mattn/todo][~mattn/todo~]]. It supports:
+It is a light-weight command line tool, which managers your todo list. However, gotd is more than a TODO tool like [[https://github.com/google/gtd-txt][google/gtd-txt]] or [[https://github.com/mattn/todo][mattn/todo]]. It supports:
 
-- event collection and time statistics.
+- Event collection and time statistics.
   + We know when a task is done and how long it takes.
-  + moreover, we know how much time we spend on this task in this week or last month.
-- quick search by keywords, tags, priority, state, ...
-- ~daily|weekly|monthly~ task definition & report
-- serverless, using ~sqlite~ database as backend
+  + Moreover, we know how much time we spent on this task in this week or last month.
+- Layout and interface like **org-mode**. But EMACS is not required.
+- Quick search by keywords, tags, priority, state, ...
+- ~Daily|weekly|monthly~ task definition & report
+- Serverless, using ~sqlite~ database as backend
 
-* Getting Started
+** Getting Started
 
-** Installation
+*** Installation
 
 #+BEGIN_SRC bash
 go get github.com/Yangruipis/gotd
 #+END_SRC
 
-** Requirements
+*** Requirements
 
 ~go>=1.5~
 
-** TODO Usage
+*** TODO Usage
