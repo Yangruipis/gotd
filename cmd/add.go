@@ -15,17 +15,17 @@ import (
 )
 
 type AddContext struct {
-	Desc string
+	Name string
 }
 
 var (
-	ctx AddContext
-	cmd = &cobra.Command{
+	addCtx AddContext
+	addCmd = &cobra.Command{
 		Use:   "add",
 		Short: "",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := Add(&ctx); err != nil {
+			if err := Add(&addCtx); err != nil {
 				log.Fatal().Msgf("error executing command: %+v", err)
 			}
 		},
@@ -33,10 +33,10 @@ var (
 )
 
 func init() {
-	rootCmd.AddCommand(cmd)
+	rootCmd.AddCommand(addCmd)
 
-	cmd.Flags().StringVar(&ctx.Desc, "desc", "", "")
-	cmd.MarkFlagRequired("desc")
+	addCmd.Flags().StringVarP(&addCtx.Name, "name", "n", "", "")
+	addCmd.MarkFlagRequired("name")
 }
 
 func Add(ctx *AddContext) error {
@@ -47,24 +47,32 @@ func Add(ctx *AddContext) error {
 	}
 	defer db.Close()
 
-	task := biz.NewTask(context.Background(), dao.NewTaskManager(db))
+	task := biz.NewBiz(context.Background(), dao.NewTaskManager(db), dao.NewEventManager(db))
 
 	priorities := []core.Priority{core.Priority0, core.Priority1, core.Priority2}
 	prompt := promptui.Select{
-		Label: "Select Day",
+		Label: "Priority",
 		Items: priorities,
 	}
-
 	idx, _, err := prompt.Run()
 	if err != nil {
-		log.Info().Msgf("Prompt failed %v\n", err)
+		log.Error().Err(err).Msgf("Prompt failed %v\n", err)
 		return err
 	}
 
-	_, err = task.Create(&core.Task{
-		Description: ctx.Desc,
+	promptStr := promptui.Prompt{
+		Label: "Description",
+	}
+	result, err := promptStr.Run()
+	if err != nil {
+		log.Error().Err(err).Msgf("Prompt failed %v\n", err)
+		return err
+	}
+
+	_, err = task.CreateTask(&core.Task{
+		Name:        ctx.Name,
+		Description: result,
 		Priority:    priorities[idx],
-		Name:        "test",
 		State:       core.StateTodo,
 	})
 

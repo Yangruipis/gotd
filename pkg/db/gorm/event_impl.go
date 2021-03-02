@@ -5,26 +5,56 @@ import (
 
 	"github.com/Yangruipis/gotd/pkg/core"
 	"github.com/jinzhu/gorm"
+	"github.com/rs/zerolog/log"
 )
 
-type EventManager struct {
+type Event struct {
 	db *gorm.DB
 }
 
-var _ core.EventManager = (*EventManager)(nil)
-
-func (m *EventManager) CreateOrUpdate(ctx context.Context, task *core.Event) (*core.Event, error) {
-	return nil, nil
+func NewEventManager(db *gorm.DB) *Event {
+	return &Event{
+		db: db,
+	}
 }
 
-func (m *EventManager) Get(ctx context.Context, id string) (*core.Event, error) {
-	return nil, nil
+var _ core.EventManager = (*Event)(nil)
+
+func (m *Event) withoutDelete() *gorm.DB {
+	return m.db
 }
 
-func (m *EventManager) Delete(ctx context.Context, id string) error {
-	return nil
+func (m *Event) Create(ctx context.Context, event *core.Event) (*core.Event, error) {
+	log.Debug().Msgf("event: %+v", event)
+	if err := m.db.AutoMigrate(event).Error; err != nil {
+		return event, err
+	}
+	err := m.db.Create(event).Error
+	return event, err
 }
 
-func (m *EventManager) List(ctx context.Context, filter core.EventFilterParam) ([]*core.Event, error) {
+func (m *Event) Update(ctx context.Context, event *core.Event) (*core.Event, error) {
+	log.Debug().Msgf("event: %+v", event)
+	err := m.db.Save(event).Error
+	return event, err
+}
+
+func (m *Event) Get(ctx context.Context, id uint32) (*core.Event, error) {
+	event := new(core.Event)
+	if err := m.withoutDelete().First(&event, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
+func (m *Event) GetByTaskID(ctx context.Context, taskId uint32) ([]*core.Event, error) {
+	events := make([]*core.Event, 0)
+	if err := m.withoutDelete().Find(&events, "task_id = ?", taskId).Error; err != nil {
+		return nil, err
+	}
+	return events, nil
+}
+
+func (m *Event) List(ctx context.Context, filter core.EventFilterParam) ([]*core.Event, error) {
 	return nil, nil
 }

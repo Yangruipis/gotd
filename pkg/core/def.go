@@ -9,8 +9,11 @@ const (
 	StateDone
 	StateSomeday
 	StateCanceled
-	StateFinished
 	StateDoing
+)
+
+var (
+	StateList = []string{"TODO", "DONE", "SOMEDAY", "CANCELED", "DOING"}
 )
 
 type Priority uint8
@@ -22,14 +25,14 @@ const (
 )
 
 type Task struct {
-
 	ID          uint32   `gorm:"column:id;primary_key;auto_increment"`
 	Name        string   `gorm:"column:name;type:varchar(64);not null"`
 	Description string   `gorm:"column:description;type:text;not null"`
-	Priority    Priority `gorm:"column:priority;type:int unsigned;not null"`
+	Priority    Priority `gorm:"column:priority;type:int unsigned;not null;default:2"`
 
 	State      State     `gorm:"column:state;type:int unsigned;not null"`
 	CreateTime time.Time `gorm:"column:create_time;type:TIMESTAMP;not null"`
+	UpdateTime time.Time `gorm:"column:update_time;type:TIMESTAMP;not null"`
 	DeletedTS  uint8     `gorm:"column:deleted_ts;type:bigint unsigned;not null"`
 }
 
@@ -38,12 +41,21 @@ func (*Task) TableName() string {
 }
 
 type Event struct {
-	ID uint32
+	ID        uint32    `gorm:"column:id;primary_key;auto_increment"`
+	TaskID    uint32    `gorm:"column:task_id;type:int unsigned"`
+	OccurTime time.Time `gorm:"column:occur_time;type:TIMESTAMP;not null"`
+	PrevState State     `gorm:"column:prev_state;type:int unsigned;not null"`
+	CurState  State     `gorm:"column:cur_state;type:int unsigned;not null"`
+}
 
-	TaskID    uint32
-	Time      time.Time
-	PrevState State
-	CurState  State
+func (*Event) TableName() string {
+	return "event"
+}
+
+func (*Event) ForeignKeys() map[string]string {
+	return map[string]string{
+		"task_id": "task(id)",
+	}
 }
 
 type Tag struct {

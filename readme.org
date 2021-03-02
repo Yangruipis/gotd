@@ -18,12 +18,13 @@ G[o]TD means:
 
 It is a light-weight command line tool, which managers your todo list. However, gotd is more than a TODO tool like [[https://github.com/google/gtd-txt][google/gtd-txt]] or [[https://github.com/mattn/todo][mattn/todo]]. It supports:
 
-- Event collection and time statistics.
+- Event collection and time audit.
   + We know when a task is done and how long it takes.
-  + Moreover, we know how much time we spent on this task in this week or last month.
-- Layout and interface like **org-mode**. But EMACS is not required.
-- Quick search by keywords, tags, priority, state, ...
-- ~Daily|weekly|monthly~ task definition & report
+  + Also, we can track every operation on this task.
+  + Moreover, we know how much time we spent on the same task in this week or last month.
+- Layout and interface like **org-mode** . But EMACS is not required.
+- Search quickly by keywords, tags, priority, state, ...
+- ~Daily|weekly|monthly~ task definition & report, like org-aganda
 - Serverless, using ~sqlite~ database as backend
 
 ** Getting Started
@@ -39,3 +40,15 @@ go get github.com/Yangruipis/gotd
 ~go>=1.5~
 
 *** TODO Usage
+
+
+** TODOs
+
+- [ ] basic CRUD impl
+- [X] task render
+- [ ] all biz function
+- [ ] tag support
+- [ ] track support, track one task and hang
+- [ ] agenda support
+- [ ] document
+  
