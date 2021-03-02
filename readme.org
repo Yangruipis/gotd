@@ -44,11 +44,10 @@ go get github.com/Yangruipis/gotd
 
 ** TODOs
 
-- [ ] basic CRUD impl
+- [X] basic CRUD impl
 - [X] task render
 - [ ] all biz function
 - [ ] tag support
 - [ ] track support, track one task and hang
-- [ ] agenda support
+- [ ] agenda & report support
 - [ ] document
-  

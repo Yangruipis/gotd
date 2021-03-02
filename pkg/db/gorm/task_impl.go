@@ -64,28 +64,31 @@ func (m *Task) Delete(ctx context.Context, id uint32) error {
 }
 
 func (m *Task) List(ctx context.Context, filter core.TaskFilterParam) ([]*core.Task, error) {
-	query := m.withoutDelete().Table("task")
+	query := m.withoutDelete()
 
 	if filter.Priority != 0 {
-		query.Where("priority = ?", filter.Priority)
+		query = query.Where("priority = ?", filter.Priority)
 	}
 	if filter.State != 0 {
-		query.Where("state = ?", filter.State)
+		query = query.Where("state = ?", filter.State)
 	}
-	if filter.NameKeyword != "" {
-		query.Where("name LIKE ?", "%"+filter.NameKeyword+"%")
+
+	if filter.NameKeyword != "" && filter.DescKeyword != "" {
+		query = query.Where("name like ? OR description like ?", "%"+filter.NameKeyword+"%", "%"+filter.DescKeyword+"%")
+	} else if filter.NameKeyword != "" {
+		query = query.Where("name like ?", "%"+filter.NameKeyword+"%")
+	} else if filter.DescKeyword != "" {
+		query = query.Where("description like ?", "%"+filter.DescKeyword+"%")
 	}
-	if filter.DescKeyword != "" {
-		query.Where("description LIKE ?", "%"+filter.DescKeyword+"%")
-	}
+
 	loc, _ := time.LoadLocation("Asia/Shanghai")
 	if filter.MinTime != 0 {
-		minTime := time.Unix(int64(filter.MinTime), 0).In(loc)
-		query.Where("create_time > ?", minTime.Format(time.RFC3339))
+		minTime := time.Unix(filter.MinTime, 0).In(loc)
+		query = query.Where("create_time > ?", minTime)
 	}
 	if filter.MaxTime != 0 && filter.MaxTime > filter.MinTime {
-		maxTime := time.Unix(int64(filter.MaxTime), 0).In(loc)
-		query.Where("create_time < ?", maxTime.Format(time.RFC3339))
+		maxTime := time.Unix(filter.MaxTime, 0).In(loc)
+		query = query.Where("create_time < ?", maxTime)
 	}
 
 	tasks := make([]*core.Task, 0)

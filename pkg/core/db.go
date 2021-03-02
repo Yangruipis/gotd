@@ -9,8 +9,8 @@ type TaskFilterParam struct {
 	DescKeyword string
 	State       uint8
 	Priority    uint8
-	MinTime     uint64
-	MaxTime     uint64
+	MinTime     int64
+	MaxTime     int64
 }
 
 type TaskManager interface {

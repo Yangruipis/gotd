@@ -61,19 +61,6 @@ func (b *Biz) List(filter core.TaskFilterParam) ([]*core.Task, error) {
 	return b.taskMgr.List(b.ctx, filter)
 }
 
-func (b *Biz) ListAll() ([]*core.Task, error) {
-	filter := core.TaskFilterParam{}
-	return b.taskMgr.List(b.ctx, filter)
-}
-
-func (b *Biz) ListByTime(minTime, maxTime uint64) ([]*core.Task, error) {
-	filter := core.TaskFilterParam{
-		MinTime: minTime,
-		MaxTime: maxTime,
-	}
-	return b.taskMgr.List(b.ctx, filter)
-}
-
 func (b *Biz) GetEventByTaskID(id uint32) ([]*core.Event, error) {
 	return b.eventMgr.GetByTaskID(b.ctx, id)
 }
