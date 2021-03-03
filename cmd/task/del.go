@@ -1,10 +1,6 @@
-package todo
+package task
 
 import (
-	"context"
-
-	"github.com/Yangruipis/gotd/pkg/biz"
-	dao "github.com/Yangruipis/gotd/pkg/db/gorm"
 	"github.com/jinzhu/gorm"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -13,7 +9,7 @@ import (
 )
 
 type DelContext struct {
-	id uint32
+	id []uint
 }
 
 var (
@@ -31,9 +27,9 @@ var (
 )
 
 func init() {
-	TodoCmd.AddCommand(delCmd)
+	TaskCmd.AddCommand(delCmd)
 
-	delCmd.Flags().Uint32VarP(&delCtx.id, "id", "i", 0, "")
+	delCmd.Flags().UintSliceVarP(&delCtx.id, "id", "i", []uint{}, "")
 	delCmd.MarkFlagRequired("id")
 }
 
@@ -45,6 +41,13 @@ func Del(ctx *DelContext) error {
 	}
 	defer db.Close()
 
-	task := biz.NewBiz(context.Background(), dao.NewTaskManager(db), dao.NewEventManager(db))
-	return task.DeleteTask(ctx.id)
+	biz := NewBiz(db)
+	for _, id := range ctx.id {
+		err := biz.DeleteTask(uint32(id))
+		if err != nil {
+			return err
+		}
+		log.Info().Msgf("task %d is deleted", id)
+	}
+	return nil
 }

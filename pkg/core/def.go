@@ -59,10 +59,57 @@ func (*Event) ForeignKeys() map[string]string {
 }
 
 type Tag struct {
-	ID uint32
+	ID         uint32    `gorm:"column:id;primary_key;auto_increment"`
+	TagName    string    `gorm:"column:name;type:varchar(64);not null;UNIQUE"`
+	CreateTime time.Time `gorm:"column:create_time;type:TIMESTAMP;not null"`
+	DeletedTS  uint8     `gorm:"column:deleted_ts;type:bigint unsigned;not null"`
+}
 
-	TaskID  uint32
-	TagName string
+func (*Tag) TableName() string {
+	return "tag"
+}
+
+type TaskTag struct {
+	ID        uint32 `gorm:"column:id;primary_key;auto_increment"`
+	TaskID    uint32 `gorm:"column:task_id;type:int unsigned"`
+	TagID     uint32 `gorm:"column:tag_id;type:int unsigned"`
+	DeletedTS uint8  `gorm:"column:deleted_ts;type:bigint unsigned;not null"`
+}
+
+func (*TaskTag) TableName() string {
+	return "task_tag"
+}
+
+func (*TaskTag) ForeignKeys() map[string]string {
+	return map[string]string{
+		"task_id": "task(id)",
+		"tag_id":  "tag(id)",
+	}
+}
+
+type AgendaType uint8
+
+const (
+	AgendaTypeDaily AgendaType = iota + 1
+	AgendaTypeWeekly
+	AgendaTypeMonthly
+)
+
+type SkipType uint8
+
+const (
+	SkipTypeOnWeekend SkipType = iota + 1
+	SkipTypeOnHoliday
+	SkipTypeOnWeekendAndHoliday
+)
+
+type Agenda struct {
+	*Task
+
+	ScheduleTime time.Time
+	DeadlineTIme time.Time
+	AgendaType   AgendaType
+	SkipType     SkipType
 }
 
 type Report struct {

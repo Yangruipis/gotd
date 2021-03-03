@@ -1,12 +1,10 @@
-package todo
+package task
 
 import (
-	"context"
 	"time"
 
 	"github.com/Yangruipis/gotd/pkg/biz"
 	"github.com/Yangruipis/gotd/pkg/core"
-	dao "github.com/Yangruipis/gotd/pkg/db/gorm"
 	"github.com/Yangruipis/gotd/pkg/render"
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/now"
@@ -45,7 +43,7 @@ var (
 )
 
 func init() {
-	TodoCmd.AddCommand(listCmd)
+	TaskCmd.AddCommand(listCmd)
 
 	listCmd.Flags().Uint32VarP(&listCtx.id, "id", "i", 0, "")
 	listCmd.Flags().BoolVarP(&listCtx.detail, "detail", "d", false, "")
@@ -67,14 +65,14 @@ func List(ctx *ListContext) error {
 		return err
 	}
 	defer db.Close()
-	gotdBiz := biz.NewBiz(context.Background(), dao.NewTaskManager(db), dao.NewEventManager(db))
+	biz := NewBiz(db)
 
 	if ctx.id > 0 {
-		taskGot, err := gotdBiz.GetTask(ctx.id)
+		taskGot, err := biz.GetTask(ctx.id)
 		if err != nil {
 			return err
 		}
-		err = renderTasks(ctx, []*core.Task{taskGot}, gotdBiz)
+		err = renderTasks(ctx, []*core.Task{taskGot}, biz)
 	} else {
 		filter := &core.TaskFilterParam{}
 		if err := parseTime(ctx, filter); err != nil {
@@ -93,11 +91,11 @@ func List(ctx *ListContext) error {
 			return err
 		}
 
-		tasksGot, err := gotdBiz.List(*filter)
+		tasksGot, err := biz.List(*filter)
 		if err != nil {
 			return err
 		}
-		err = renderTasks(ctx, tasksGot, gotdBiz)
+		err = renderTasks(ctx, tasksGot, biz)
 	}
 	return err
 }

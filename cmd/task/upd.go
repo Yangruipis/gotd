@@ -1,11 +1,7 @@
-package todo
+package task
 
 import (
-	"context"
-
-	"github.com/Yangruipis/gotd/pkg/biz"
 	"github.com/Yangruipis/gotd/pkg/core"
-	dao "github.com/Yangruipis/gotd/pkg/db/gorm"
 	"github.com/jinzhu/gorm"
 	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
@@ -34,7 +30,7 @@ var (
 )
 
 func init() {
-	TodoCmd.AddCommand(updCmd)
+	TaskCmd.AddCommand(updCmd)
 
 	updCmd.Flags().Uint32VarP(&updCtx.id, "id", "i", 0, "")
 	updCmd.Flags().BoolVarP(&updCtx.updateDesc, "desc", "d", false, "")
@@ -48,10 +44,9 @@ func Upd(ctx *UpdContext) error {
 		return err
 	}
 	defer db.Close()
+	biz := NewBiz(db)
 
-	task := biz.NewBiz(context.Background(), dao.NewTaskManager(db), dao.NewEventManager(db))
-
-	taskGot, err := task.GetTask(ctx.id)
+	taskGot, err := biz.GetTask(ctx.id)
 	if err != nil {
 		return err
 	}
@@ -92,7 +87,7 @@ func Upd(ctx *UpdContext) error {
 		}
 		taskGot.Description = result
 	}
-	_, err = task.UpdateTaskState(taskGot, prevState)
+	_, err = biz.UpdateTaskState(taskGot, prevState)
 
 	return err
 }

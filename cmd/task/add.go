@@ -1,11 +1,7 @@
-package todo
+package task
 
 import (
-	"context"
-
-	"github.com/Yangruipis/gotd/pkg/biz"
 	"github.com/Yangruipis/gotd/pkg/core"
-	dao "github.com/Yangruipis/gotd/pkg/db/gorm"
 	"github.com/jinzhu/gorm"
 	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
@@ -16,6 +12,8 @@ import (
 
 type AddContext struct {
 	Name string
+
+	tag bool
 }
 
 var (
@@ -33,8 +31,9 @@ var (
 )
 
 func init() {
-	TodoCmd.AddCommand(addCmd)
+	TaskCmd.AddCommand(addCmd)
 	addCmd.Flags().StringVarP(&addCtx.Name, "name", "n", "", "")
+	addCmd.Flags().BoolVarP(&addCtx.tag, "tag", "t", false, "")
 	addCmd.MarkFlagRequired("name")
 }
 
@@ -46,7 +45,7 @@ func Add(ctx *AddContext) error {
 	}
 	defer db.Close()
 
-	task := biz.NewBiz(context.Background(), dao.NewTaskManager(db), dao.NewEventManager(db))
+	biz := NewBiz(db)
 
 	priorities := []core.Priority{core.Priority0, core.Priority1, core.Priority2}
 	prompt := promptui.Select{
@@ -68,12 +67,47 @@ func Add(ctx *AddContext) error {
 		return err
 	}
 
-	_, err = task.CreateTask(&core.Task{
+	taskGot, err := biz.CreateTask(&core.Task{
 		Name:        ctx.Name,
 		Description: result,
 		Priority:    priorities[idx],
 		State:       core.StateTodo,
 	})
+	if err != nil {
+		return err
+	}
 
-	return err
+	if ctx.tag {
+		tags, err := biz.ListAllTag()
+		if err != nil {
+			return err
+		}
+		index := -1
+
+		tagNames := make([]string, 0, len(tags))
+		for _, tag := range tags {
+			tagNames = append(tagNames, tag.TagName)
+		}
+		for index < 0 {
+			prompt := promptui.SelectWithAdd{
+				Label:    "Tag Name",
+				Items:    tagNames,
+				AddLabel: "New Tag",
+			}
+
+			index, result, err = prompt.Run()
+			if index == -1 {
+				tagNames = append(tagNames, result)
+			}
+		}
+		if err != nil {
+			log.Error().Err(err).Msgf("Prompt failed %v\n", err)
+			return err
+		}
+		if _, err := biz.CreateTaskTag(tagNames[index], taskGot.ID); err != nil {
+			return err
+		}
+
+	}
+	return nil
 }

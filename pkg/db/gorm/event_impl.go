@@ -12,13 +12,13 @@ type Event struct {
 	db *gorm.DB
 }
 
-func NewEventManager(db *gorm.DB) *Event {
+func NewEventDao(db *gorm.DB) *Event {
 	return &Event{
 		db: db,
 	}
 }
 
-var _ core.EventManager = (*Event)(nil)
+var _ core.EventDao = (*Event)(nil)
 
 func (m *Event) withoutDelete() *gorm.DB {
 	return m.db

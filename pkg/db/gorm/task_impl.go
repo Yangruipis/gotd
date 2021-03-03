@@ -13,13 +13,13 @@ type Task struct {
 	db *gorm.DB
 }
 
-func NewTaskManager(db *gorm.DB) *Task {
+func NewTaskDao(db *gorm.DB) *Task {
 	return &Task{
 		db: db,
 	}
 }
 
-var _ core.TaskManager = (*Task)(nil)
+var _ core.TaskDao = (*Task)(nil)
 
 func (m *Task) withoutDelete() *gorm.DB {
 	return m.db.Where("deleted_ts = 0")

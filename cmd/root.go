@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Yangruipis/gotd/cmd/todo"
+	"github.com/Yangruipis/gotd/cmd/task"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
@@ -34,7 +34,7 @@ func Execute() {
 var loglevel uint8
 
 func init() {
-	rootCmd.AddCommand(todo.TodoCmd)
+	rootCmd.AddCommand(task.TaskCmd)
 
 	cobra.OnInitialize(initLog)
 
