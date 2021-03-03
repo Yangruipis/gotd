@@ -1,4 +1,4 @@
-package cmd
+package todo
 
 import (
 	"context"
@@ -34,7 +34,7 @@ var (
 )
 
 func init() {
-	rootCmd.AddCommand(updCmd)
+	TodoCmd.AddCommand(updCmd)
 
 	updCmd.Flags().Uint32VarP(&updCtx.id, "id", "i", 0, "")
 	updCmd.Flags().BoolVarP(&updCtx.updateDesc, "desc", "d", false, "")

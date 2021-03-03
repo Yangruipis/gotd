@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Yangruipis/gotd/cmd/todo"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
@@ -33,6 +34,8 @@ func Execute() {
 var loglevel uint8
 
 func init() {
+	rootCmd.AddCommand(todo.TodoCmd)
+
 	cobra.OnInitialize(initLog)
 
 	rootCmd.PersistentFlags().Uint8Var(&loglevel, "loglevel", 1, "Logging Level")

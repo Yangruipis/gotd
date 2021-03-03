@@ -1,4 +1,4 @@
-package cmd
+package todo
 
 import (
 	"context"
@@ -31,7 +31,7 @@ var (
 )
 
 func init() {
-	rootCmd.AddCommand(delCmd)
+	TodoCmd.AddCommand(delCmd)
 
 	delCmd.Flags().Uint32VarP(&delCtx.id, "id", "i", 0, "")
 	delCmd.MarkFlagRequired("id")

@@ -1,4 +1,4 @@
-package cmd
+package todo
 
 import (
 	"context"
@@ -45,7 +45,7 @@ var (
 )
 
 func init() {
-	rootCmd.AddCommand(listCmd)
+	TodoCmd.AddCommand(listCmd)
 
 	listCmd.Flags().Uint32VarP(&listCtx.id, "id", "i", 0, "")
 	listCmd.Flags().BoolVarP(&listCtx.detail, "detail", "d", false, "")

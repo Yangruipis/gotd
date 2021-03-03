@@ -1,4 +1,4 @@
-package cmd
+package todo
 
 import (
 	"context"
@@ -33,8 +33,7 @@ var (
 )
 
 func init() {
-	rootCmd.AddCommand(addCmd)
-
+	TodoCmd.AddCommand(addCmd)
 	addCmd.Flags().StringVarP(&addCtx.Name, "name", "n", "", "")
 	addCmd.MarkFlagRequired("name")
 }
